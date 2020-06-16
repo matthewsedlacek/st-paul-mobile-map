@@ -47,7 +47,7 @@ window.onload = function() {
 }
 
 
-//ANDY: adds message section
+//MESSAGES
 // const msgContainer = document.querySelector("#messages")
 const msgTabs = document.querySelector("#associated-trails")
 const msgSection = document.querySelector("#messages")
@@ -143,4 +143,41 @@ function postMessage(newUser, newMsg, newTrail){
     // .then(json => console.log(json))
 }
 
+// TRAIL DATA
+const trailDataCard = document.querySelector("#trail-data")
+const pathSelector = document.querySelector("#path-selector")
+
+// fetch bike trail data
+function getBikeTrailData(bikeTrailId) {
+   fetch("http://localhost:3000/bike_trails/" + bikeTrailId)
+   .then(resp => resp.json())
+   .then(json => console.log(json)) 
+}
+// format it, hide it
+function renderBikeTrailData(data) {
+    const trailName = data["data"]["attributes"]["name"]
+    const trailDistance = data["data"]["attributes"]["distance"]
+    const trailType = data["data"]["attributes"]["trail_type"]
+
+    const trailNameDropdown = document.createElement("li")
+    trailNameDropdown.innerHTML = <a href="#"></a>
+    trailNameDropdown.innerText = trailName 
+    pathSelector.appendChild(trailNameDropdown)
+
+    data["data"]
+
+
+
+}
+// make it identifiable so that when you select a trail it can appear
+
+
+
+// BIKE PATH LISTENERS AND SELECTORS
+const pathDropdown = document.querySelector("#path-selector")
+pathDropdown.children.forEach(path => {
+	path.addEventListener('click', (e) => {
+
+    })
+})
 
