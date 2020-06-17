@@ -1,15 +1,33 @@
+document.addEventListener("DOMContentLoaded", (event) => {
+    console.log('DOM fully loaded and parsed')
 
-// GOOGLE MAPS API CALL   
-// function initMap() {
-//     var map = new google.maps.Map(document.getElementById('map'), {
-//         zoom: 13,
-//         center: {lat: 47.6062, lng: -122.3321}
-//     });
-    
-//     var bikeLayer = new google.maps.BicyclingLayer();
-//     bikeLayer.setMap(map);
-// }
+    getBikeTrailData(1)
+    getBikeTrailData(2)
+    getBikeTrailData(3)
+    getBikeTrailData(4)
+    getBikeTrailData(5)
+    getBikeTrailData(6)
+    getBikeTrailData(7)
+    getBikeTrailData(8)
+    getBikeTrailData(9)
+    getBikeTrailData(10)
+    getMessage()
+})
 
+// MAP
+let mymap = L.map('mapid').setView([47.6062, -122.3321], 12);
+
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoiam9obnJ1c2NoIiwiYSI6ImNrYml1eGF5bjBqMzkydnFueGdmbzZkNjcifQ.BSK5zVzCjjSKDKDSb1xcnA'
+}).addTo(mymap);
+
+var marker = L.marker([47.571360, -122.349406]).addTo(mymap);
+marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
     
 // WEATHER
 function drawWeather( d ) {
@@ -55,11 +73,11 @@ const msgSection = document.querySelector("#messages")
 const form = document.querySelector(".message-form")
 
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    console.log('DOM fully loaded and parsed')
-    getBikeTrailData(2)
-    getMessage()
-})
+// document.addEventListener("DOMContentLoaded", (event) => {
+//     console.log('DOM fully loaded and parsed')
+//     getBikeTrailData(2)
+//     getMessage()
+// })
 
 
 function getMessage(){
@@ -79,7 +97,7 @@ function renderMessage(message){
     card.className = "card"
     // card.className = `msg-${message.bike_trail_id}`
     card.id = `msg-${message.bike_trail_id}`
-    card.hidden = true
+    card.style.display = "none"
     
     const row = document.createElement("div")
     row.className = "row"
@@ -154,6 +172,12 @@ function addMessage(item){
 
     postBtn.addEventListener("click", (e) => {
         e.preventDefault()
+
+        const messages = document.querySelectorAll(`#msg-${e.target.id}`)
+        messages.forEach( message => {
+            message.style.display = "block"
+        })
+
         newUser.innerText = userInput.value
         userInput.value = ""
         newMsg.innerText = msgInput.value
@@ -196,6 +220,7 @@ function renderBikeTrailData(data) {
     const trailDistance = data["data"]["attributes"]["distance"]
     const trailType = data["data"]["attributes"]["trail_type"]
     const trailCard = document.createElement("div")
+    trailCard.id = ``
     // trailCard.className = "card"
     trailCard.id = `card-${data["data"]["id"]}`
     const innerTrailInfo = document.createElement("div")
@@ -211,7 +236,7 @@ function renderBikeTrailData(data) {
     const trailInfoType = document.createElement("div")
     trailInfoType.className = "col-sm-6"
     trailInfoType.innerText = `Type ${trailType}`
-    trailCard.hidden = true
+    trailCard.style.display = "none"
     innerTrailInfo.append(trailInfoDistance, trailInfoType)
     trailCard.appendChild(trailHeader)
     trailCard.appendChild(innerTrailInfo)
@@ -251,10 +276,15 @@ function renderBikeTrailData(data) {
 		}
 		]
     });
-    chartContainer.hidden = true
-	chart.render();
+    chart.render();
+    chartContainer.style.display = "none";
 
+    const latitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
+    const longitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
+    // mymap.setView([longitude, latitude], 13);
 
+    // let marker = L.marker([longitude, latitude]).addTo(mymap)
+    // marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
 }
 // make it identifiable so that when you select a trail it can appear
 
@@ -262,17 +292,31 @@ function renderBikeTrailData(data) {
 
 // BIKE PATH LISTENERS AND SELECTORS
 // const pathDropdown = document.querySelector("#path-selector")
+
+
 function addListenerToDropdownItem(item) {
     item.addEventListener("click", (e) => {
-        trailInfo.children.hidden = true
-        trailData.children.hidden = true
+        
+        let infoChildren = trailInfo.children;
+        for (let i = 0; i < infoChildren.length; i++) {
+            let tableChild = infoChildren[i];
+            tableChild.style.display = "none"
+        }
+        let chartChildren = trailData.children;
+        for (let i = 0; i < chartChildren.length; i++) {
+            let tableChild = chartChildren[i];
+            tableChild.style.display = "none"
+        }
+        // trailInfo.children.style.display = "none";
+        // trailData.children.style.display = "none";
         const card = document.getElementById(`card-${e.target.id}`)
-        card.hidden = false
+        card.style.display = "block"
         const chart = document.getElementById(`chartContainer-${e.target.id}`)
-        chart.hidden = false
+        chart.style.display = "block";
+
         const messages = document.querySelectorAll(`#msg-${e.target.id}`)
         messages.forEach( message => {
-            message.hidden = false
+            message.style.display = "block"
         })
 
         const hiddenInput = document.querySelector(".message-form").childNodes[1]
@@ -282,5 +326,5 @@ function addListenerToDropdownItem(item) {
         // trailInput.name= `${item.id}`
         form.replaceChild(trailInput, hiddenInput)
         addMessage(item)
-    });
-}
+        });
+    }
