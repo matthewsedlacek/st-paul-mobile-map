@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log('DOM fully loaded and parsed')
+
     getBikeTrailData(1)
     getBikeTrailData(2)
     getBikeTrailData(3)
@@ -10,7 +11,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     getBikeTrailData(8)
     getBikeTrailData(9)
     getBikeTrailData(10)
+    getMessage()
 })
+
 // MAP
 let mymap = L.map('mapid').setView([47.6062, -122.3321], 12);
 
@@ -72,10 +75,8 @@ const form = document.querySelector(".message-form")
 
 // document.addEventListener("DOMContentLoaded", (event) => {
 //     console.log('DOM fully loaded and parsed')
-
-    
 //     getBikeTrailData(2)
-//     // getMessage()
+//     getMessage()
 // })
 
 
@@ -88,53 +89,95 @@ function getMessage(){
 }
 
 function renderMessage(message){
-    const div = document.createElement("div")
-    div.className = "msgCard"
-    div.hidden = true
+    const cardBlock = document.querySelector(".card-block")
+    // const cardBlock = document.createElement("div")
+    // cardBlock.className = "card-block"
     
-    const user_name = document.createElement("li")
-    user_name.innerText = message.user_name
-
-    const msg = document.createElement("p")
-    msg.innerText = message.content
-
-    const bikeTrail = document.createElement("li")
-    bikeTrail.id = message.bike_trail_id
-    bikeTrail.innerText = message.bike_trail_id
-    bikeTrailListener(bikeTrail, div)
+    const card = document.createElement("div")
+    card.className = "card"
+    // card.className = `msg-${message.bike_trail_id}`
+    card.id = `msg-${message.bike_trail_id}`
+    card.style.display = "none"
     
-    msgSection.appendChild(messages)
-    div.append(bikeTrail, user_name, msg)
-    messages.appendChild(div)
-    msgTabs.append(bikeTrail)
+    const row = document.createElement("div")
+    row.className = "row"
+    
+    const userCol = document.createElement("div")
+    userCol.className = "col-sm-4"
+    userCol.innerText = message.user_name
+    
+    const msgCol = document.createElement("div")
+    msgCol.className = "col-sm-6"
+    msgCol.innerText = message.content
+
+    
+    row.append(userCol, msgCol)
+    card.appendChild(row)
+    cardBlock.appendChild(card)
+    // console.log(cardBlock)
+
+    // const div = document.createElement("div")
+    // div.className = "row"
+    // div.hidden = true
+
+    // const userCol = document.querySelector(".col-sm-4")
+    // const cardText = document.querySelector(".card-text")
+    // // div.id = `message.bike_trail_id`
+    
+    // const user_name = document.createElement("li")
+    // user_name.innerText = message.user_name
+
+    // const msg = document.createElement("p")
+    // msg.innerText = message.content
+
+    // // const bikeTrail = document.createElement("li")
+    // // bikeTrail.id = message.bike_trail_id
+    // // bikeTrail.innerText = message.bike_trail.name
+    // // bikeTrailListener(bikeTrail, div)
+
+    // userCol.appendChild(user_name)
+    // cardText.appendChild(msg)
+    
+    // msgSection.appendChild(messages)
+    // div.append(user_name, msg)
+    // row.appendChild(div)
+
+    // messages.appendChild(div)
+    // msgTabs.append(bikeTrail)
 }
 
-function bikeTrailListener(bikeTrail, div) {
-    bikeTrail.addEventListener("click", (e) => {
-        const cards = document.querySelectorAll(".msgCard")
-        cards.forEach(card => card.hidden = true)
-        div.hidden = false
+// function bikeTrailListener(bikeTrail, div) {
+//     bikeTrail.addEventListener("click", (e) => {
+//         const cards = document.querySelectorAll(".msgCard")
+//         cards.forEach(card => card.hidden = true)
+//         div.hidden = false
 
-        const hiddenInput = document.querySelector(".message-form").childNodes[1]
-        const trailInput = document.createElement("input")
-        trailInput.type="hidden"
-        trailInput.id= `${bikeTrail.id}`
-        trailInput.name= `${bikeTrail.id}`
-        form.replaceChild(trailInput, hiddenInput)
-        addMessage(bikeTrail)
-    })
-}
+//         const hiddenInput = document.querySelector(".message-form").childNodes[1]
+//         const trailInput = document.createElement("input")
+//         trailInput.type="hidden"
+//         trailInput.id= `${bikeTrail.id}`
+//         trailInput.name= `${bikeTrail.id}`
+//         form.replaceChild(trailInput, hiddenInput)
+//         addMessage(bikeTrail)
+//     })
+// }
 
-function addMessage(bikeTrail){
+function addMessage(item){
     const userInput = document.querySelector(".user_name-input")
     const msgInput = document.querySelector(".message-input")
     const postBtn = document.querySelector(".message-button")
-    const newUser = document.createElement("li")
+    const newUser = document.createElement("p")
     const newMsg = document.createElement("p")
-    const newTrail = bikeTrail.id
+    const newTrail = parseInt(`${item.id}`)
 
     postBtn.addEventListener("click", (e) => {
         e.preventDefault()
+
+        const messages = document.querySelectorAll(`#msg-${e.target.id}`)
+        messages.forEach( message => {
+            message.style.display = "block"
+        })
+
         newUser.innerText = userInput.value
         userInput.value = ""
         newMsg.innerText = msgInput.value
@@ -148,7 +191,7 @@ function postMessage(newUser, newMsg, newTrail){
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Accept: "applicaiton/json "
+            Accept: "application/json "
         },
         body: JSON.stringify({
             "user_name": newUser.innerText,
@@ -156,8 +199,8 @@ function postMessage(newUser, newMsg, newTrail){
             "bike_trail_id": newTrail
         })
     })
-    // .then(resp => resp.json())
-    // .then(json => console.log(json))
+    .then(resp => resp.json())
+    .then(json => renderMessage(json))
 }
 
 // TRAIL DATA
@@ -221,6 +264,14 @@ function renderBikeTrailData(data) {
         }
         trailDataPoints.push(dataObj)
     })
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+      let dateTime = (`${data["included"][0]["attributes"]["date_time"]})`)
+      let yearMonth = dateTime.split("-",2)
+      let year = yearMonth[0]
+      let month = parseInt(yearMonth[1])
+      let monthValue = (monthNames[month - 1])
 
     let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
         theme: "light2",
@@ -238,6 +289,9 @@ function renderBikeTrailData(data) {
                triggerLogElement.setAttribute("value", e.trigger);
                 
            },
+        title:{
+			text: `${monthValue} ${year} Traffic`              
+        },
 		data: [              
 		{
 			// Change type to "doughnut", "line", "splineArea", etc.
@@ -276,15 +330,69 @@ function addListenerToDropdownItem(item) {
         let tableChild = chartChildren[i];
         tableChild.style.display = "none"
     }
+    const cardBlock = document.querySelector(".card-block")
+    let messageChildren = cardBlock.children;
+    for (let i=0; i < messageChildren.length; i++) {
+        let messageChild = messageChildren[i];
+        messageChild.style.display = "none"
+    }
     // trailInfo.children.style.display = "none";
     // trailData.children.style.display = "none";
     const card = document.getElementById(`card-${e.target.id}`)
     card.style.display = "block"
     const chart = document.getElementById(`chartContainer-${e.target.id}`)
     chart.style.display = "block";
+    const trailMessages = document.querySelectorAll(`#msg-${e.target.id}`)
+    trailMessages.forEach( message => {
+        message.style.display = "block"
+    })
+
+    const hiddenInput = document.querySelector(".message-form").childNodes[1]
+    const trailInput = document.createElement("input")
+    trailInput.type="hidden"
+    trailInput.id= `${item.id}`
+    // trailInput.name= `${item.id}`
+    form.replaceChild(trailInput, hiddenInput)
+    addMessage(item)
+
     const longitude = parseFloat(e.target.attributes.longitude.value)
     const latitude = parseFloat(e.target.attributes.latitude.value)
     mymap.flyTo([longitude, latitude], 14)
 
     });
 }
+        
+        
+
+    //     const cardBlock = document.querySelector(".card-block")
+    //     let messageChildren = cardBlock.children;
+    //     for (let i=0; i < messageChildren.length; i++) {
+    //         let messageChild = messageChildren[i];
+    //         messageChild.style.display = "none"
+    //     }
+    //     // let messages = document.querySelectorAll(".card")
+    //     // messages.forEach(card => {
+    //     //     card.style.display = "none"
+    //     // })
+      
+    //     // trailInfo.children.style.display = "none";
+    //     // trailData.children.style.display = "none";
+    //     const card = document.getElementById(`card-${e.target.id}`)
+    //     card.style.display = "block"
+    //     const chart = document.getElementById(`chartContainer-${e.target.id}`)
+    //     chart.style.display = "block";
+
+    //     const trailMessages = document.querySelectorAll(`#msg-${e.target.id}`)
+    //     trailMessages.forEach( message => {
+    //         message.style.display = "block"
+    //     })
+
+    //     const hiddenInput = document.querySelector(".message-form").childNodes[1]
+    //     const trailInput = document.createElement("input")
+    //     trailInput.type="hidden"
+    //     trailInput.id= `${item.id}`
+    //     // trailInput.name= `${item.id}`
+    //     form.replaceChild(trailInput, hiddenInput)
+    //     addMessage(item)
+    //     });
+    // }
