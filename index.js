@@ -1,5 +1,16 @@
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log('DOM fully loaded and parsed')
+    getBikeTrailData(1)
+    getBikeTrailData(2)
+    getBikeTrailData(3)
+    getBikeTrailData(4)
+    getBikeTrailData(5)
+    getBikeTrailData(6)
+    getBikeTrailData(7)
+    getBikeTrailData(8)
+    getBikeTrailData(9)
+    getBikeTrailData(10)
+})
 // MAP
 let mymap = L.map('mapid').setView([47.6062, -122.3321], 12);
 
@@ -192,6 +203,8 @@ function renderBikeTrailData(data) {
     const trailNameDropdown = document.createElement("li")
     trailNameDropdown.innerText = trailName 
     trailNameDropdown.id = `${data["data"]["id"]}`
+    trailNameDropdown.setAttribute("longitude", data["data"]["attributes"]["locations"][0]["longitude"])
+    trailNameDropdown.setAttribute("latitude", data["data"]["attributes"]["locations"][0]["latitude"])
     addListenerToDropdownItem(trailNameDropdown)
     pathSelector.appendChild(trailNameDropdown)
 
@@ -213,7 +226,18 @@ function renderBikeTrailData(data) {
         theme: "light2",
 		title:{
 			text: "January 2019 Traffic"              
-		},
+        },
+        zoomEnabled: true,
+        rangeChanging: function (e) {
+            //update total count 
+             var eventCountElement = document.getElementById("eventCount");
+               eventCountElement.setAttribute("value", parseInt(eventCountElement.getAttribute("value")) + 1);
+      
+            // update event Trigger
+               var triggerLogElement = document.getElementById("triggerLog");
+               triggerLogElement.setAttribute("value", e.trigger);
+                
+           },
 		data: [              
 		{
 			// Change type to "doughnut", "line", "splineArea", etc.
@@ -258,18 +282,9 @@ function addListenerToDropdownItem(item) {
     card.style.display = "block"
     const chart = document.getElementById(`chartContainer-${e.target.id}`)
     chart.style.display = "block";
+    const longitude = parseFloat(e.target.attributes.longitude.value)
+    const latitude = parseFloat(e.target.attributes.latitude.value)
+    mymap.flyTo([longitude, latitude], 14)
+
     });
 }
-
-getBikeTrailData(1)
-getBikeTrailData(2)
-getBikeTrailData(3)
-getBikeTrailData(4)
-getBikeTrailData(5)
-getBikeTrailData(6)
-getBikeTrailData(7)
-getBikeTrailData(8)
-getBikeTrailData(9)
-getBikeTrailData(10)
-// getMessage()
-})
