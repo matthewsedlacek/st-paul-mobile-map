@@ -307,6 +307,18 @@ function addListenerToDropdownItem(item) {
             let tableChild = chartChildren[i];
             tableChild.style.display = "none"
         }
+
+        const cardBlock = document.querySelector(".card-block")
+        let messageChildren = cardBlock.children;
+        for (let i=0; i < messageChildren.length; i++) {
+            let messageChild = messageChildren[i];
+            messageChild.style.display = "none"
+        }
+        // let messages = document.querySelectorAll(".card")
+        // messages.forEach(card => {
+        //     card.style.display = "none"
+        // })
+      
         // trailInfo.children.style.display = "none";
         // trailData.children.style.display = "none";
         const card = document.getElementById(`card-${e.target.id}`)
@@ -314,8 +326,8 @@ function addListenerToDropdownItem(item) {
         const chart = document.getElementById(`chartContainer-${e.target.id}`)
         chart.style.display = "block";
 
-        const messages = document.querySelectorAll(`#msg-${e.target.id}`)
-        messages.forEach( message => {
+        const trailMessages = document.querySelectorAll(`#msg-${e.target.id}`)
+        trailMessages.forEach( message => {
             message.style.display = "block"
         })
 
