@@ -208,11 +208,19 @@ function renderBikeTrailData(data) {
         }
         trailDataPoints.push(dataObj)
     })
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+      let dateTime = (`${data["included"][0]["attributes"]["date_time"]})`)
+      let yearMonth = dateTime.split("-",2)
+      let year = yearMonth[0]
+      let month = parseInt(yearMonth[1])
+      let monthValue = (monthNames[month - 1])
 
     let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
         theme: "light2",
 		title:{
-			text: "January 2019 Traffic"              
+			text: `${monthValue} ${year} Traffic`               
 		},
 		data: [              
 		{
