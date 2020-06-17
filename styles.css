@@ -1,3 +1,8 @@
+.scroll {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
 #mapid {
-height: 925px; 
+    height: 925px; 
 }
