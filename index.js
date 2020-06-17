@@ -57,8 +57,8 @@ const form = document.querySelector(".message-form")
 
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log('DOM fully loaded and parsed')
-
-    getMessage()
+    getBikeTrailData(2)
+    // getMessage()
 })
 
 
@@ -144,28 +144,79 @@ function postMessage(newUser, newMsg, newTrail){
 }
 
 // TRAIL DATA
-const trailDataCard = document.querySelector("#trail-data")
+const trailData = document.querySelector("#trail-data")
 const pathSelector = document.querySelector("#path-selector")
+const trailInfo = document.querySelector("#trail-info")
 
 // fetch bike trail data
 function getBikeTrailData(bikeTrailId) {
-   fetch("http://localhost:3000/bike_trails/" + bikeTrailId)
-   .then(resp => resp.json())
-   .then(json => console.log(json)) 
+    fetch("http://localhost:3000/bike_trails/" + bikeTrailId)
+    .then(resp => resp.json())
+    .then(json => renderBikeTrailData(json)) 
 }
 // format it, hide it
 function renderBikeTrailData(data) {
     const trailName = data["data"]["attributes"]["name"]
     const trailDistance = data["data"]["attributes"]["distance"]
     const trailType = data["data"]["attributes"]["trail_type"]
+    const trailCard = document.createElement("div")
+    // trailCard.className = "card"
+    trailCard.id = `card-${data["data"]["id"]}`
+    const innerTrailInfo = document.createElement("div")
+
+
+    const trailHeader = document.createElement("h2")
+    trailHeader.innerText = `${trailName}`
+    trailHeader.className = `${data["data"]["id"]}`
+
+    const trailInfoDistance = document.createElement("div")
+    trailInfoDistance.className = "col-sm-6"
+    trailInfoDistance.innerText = `Distance: ${trailDistance} Miles`
+    const trailInfoType = document.createElement("div")
+    trailInfoType.className = "col-sm-6"
+    trailInfoType.innerText = `Type ${trailType}`
+    trailCard.hidden = true
+    innerTrailInfo.append(trailInfoDistance, trailInfoType)
+    trailCard.appendChild(trailHeader)
+    trailCard.appendChild(innerTrailInfo)
+    trailInfo.appendChild(trailCard)
+    
 
     const trailNameDropdown = document.createElement("li")
-    trailNameDropdown.innerHTML = <a href="#"></a>
     trailNameDropdown.innerText = trailName 
+    trailNameDropdown.id = `${data["data"]["id"]}`
+    addListenerToDropdownItem(trailNameDropdown)
     pathSelector.appendChild(trailNameDropdown)
 
-    data["data"]
+    // CHART
+    const chartContainer = document.createElement("div")
+    chartContainer.style = "height: 290px; width: 100%; right: 0px; position: absolute;"
+    chartContainer.id = `chartContainer-${data["data"]["id"]}`
+    trailData.appendChild(chartContainer)
+    let trailDataPoints = []
+    data["included"].forEach(point => {
+        let dataObj = { 
+            label: point["attributes"]["date_time"],
+            y: point["attributes"]["total_trips"]
+        }
+        trailDataPoints.push(dataObj)
+    })
 
+    let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
+        theme: "light2",
+		title:{
+			text: "January 2019 Traffic"              
+		},
+		data: [              
+		{
+			// Change type to "doughnut", "line", "splineArea", etc.
+			type: "line",
+			dataPoints: trailDataPoints
+		}
+		]
+    });
+    chartContainer.hidden = true
+	chart.render();
 
 
 }
@@ -174,10 +225,15 @@ function renderBikeTrailData(data) {
 
 
 // BIKE PATH LISTENERS AND SELECTORS
-const pathDropdown = document.querySelector("#path-selector")
-pathDropdown.children.forEach(path => {
-	path.addEventListener('click', (e) => {
-
-    })
-})
+// const pathDropdown = document.querySelector("#path-selector")
+function addListenerToDropdownItem(item) {
+    item.addEventListener("click", (e) => {
+        trailInfo.children.hidden = true
+        trailData.children.hidden = true
+        const card = document.getElementById(`card-${e.target.id}`)
+        card.hidden = false
+        const chart = document.getElementById(`chartContainer-${e.target.id}`)
+        chart.hidden = false
+    });
+}
 
