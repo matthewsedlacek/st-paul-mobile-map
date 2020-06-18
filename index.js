@@ -73,13 +73,6 @@ const msgSection = document.querySelector("#messages")
 const form = document.querySelector(".message-form")
 
 
-// document.addEventListener("DOMContentLoaded", (event) => {
-//     console.log('DOM fully loaded and parsed')
-//     getBikeTrailData(2)
-//     getMessage()
-// })
-
-
 function getMessage(){
     fetch("http://localhost:3000/messages")
     .then(resp => resp.json())
@@ -165,19 +158,19 @@ function renderMessage(message){
 function addMessage(item){
     const userInput = document.querySelector(".user_name-input")
     const msgInput = document.querySelector(".message-input")
-    const postBtn = document.querySelector(".message-button")
     const newUser = document.createElement("p")
+    // newUser.className = "bg-secondary"
     const newMsg = document.createElement("p")
     const newTrail = parseInt(`${item.id}`)
-
+    debugger
     postBtn.addEventListener("click", (e) => {
         e.preventDefault()
-
+        debugger
         const messages = document.querySelectorAll(`#msg-${e.target.id}`)
         messages.forEach( message => {
             message.style.display = "block"
         })
-
+        
         newUser.innerText = userInput.value
         userInput.value = ""
         newMsg.innerText = msgInput.value
@@ -185,6 +178,32 @@ function addMessage(item){
         postMessage(newUser, newMsg, newTrail)
     })
 }
+const postBtn = document.querySelector("#message-button")
+postBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    let userInput = document.querySelector(".user_name-input").value
+    let msgInput = document.querySelector(".message-input").value
+    const newTrail = parseInt(`${e.target.parentNode.children[0].id}`)
+    const newMsg = {
+        user_name: userInput,
+        content: msgInput,
+        bike_trail_id: newTrail
+    }
+    renderMessage(newMsg)
+    const messages = document.querySelectorAll(`#msg-${e.target.parentNode.children[0].id}`)
+    messages.forEach( message => {
+        message.style.display = "block"
+    })
+    debugger
+    document.querySelector(".user_name-input").value = ""
+    document.querySelector(".message-input").value = ""
+    // newUser.innerText = userInput.value
+    // userInput.value = ""
+    // newMsg.innerText = msgInput.value
+    // msgInput.value = ""
+    postMessage(userInput, msgInput, newTrail)
+})
+
 
 function postMessage(newUser, newMsg, newTrail){
     fetch("http://localhost:3000/messages", {
@@ -194,13 +213,17 @@ function postMessage(newUser, newMsg, newTrail){
             Accept: "application/json "
         },
         body: JSON.stringify({
-            "user_name": newUser.innerText,
-            "content": newMsg.innerText,
+            "user_name": newUser,
+            "content": newMsg,
             "bike_trail_id": newTrail
         })
     })
     .then(resp => resp.json())
-    .then(json => renderMessage(json))
+    .then(json => {
+        renderMessage(json)
+        debugger
+    })
+    // document.querySelector(`msg-)
 }
 
 // TRAIL DATA
@@ -256,6 +279,14 @@ function renderBikeTrailData(data) {
     chartContainer.style = "height: 290px; width: 100%; right: 0px; position: absolute;"
     chartContainer.id = `chartContainer-${data["data"]["id"]}`
     trailData.appendChild(chartContainer)
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+    let dateTime = (`${data["included"][0]["attributes"]["date_time"]})`)
+    let yearMonth = dateTime.split("-",2)
+    let year = yearMonth[0]
+    let month = parseInt(yearMonth[1])
+    let monthValue = (monthNames[month - 1])
+
     let trailDataPoints = []
     data["included"].forEach(point => {
         let dataObj = { 
@@ -264,16 +295,7 @@ function renderBikeTrailData(data) {
         }
         trailDataPoints.push(dataObj)
     })
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-      let dateTime = (`${data["included"][0]["attributes"]["date_time"]})`)
-      let yearMonth = dateTime.split("-",2)
-      let year = yearMonth[0]
-      let month = parseInt(yearMonth[1])
-      let monthValue = (monthNames[month - 1])
-
-    let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
+let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
         theme: "light2",
 		title:{
 			text: "January 2019 Traffic"              
@@ -347,13 +369,14 @@ function addListenerToDropdownItem(item) {
         message.style.display = "block"
     })
 
-    const hiddenInput = document.querySelector(".message-form").childNodes[1]
-    const trailInput = document.createElement("input")
-    trailInput.type="hidden"
-    trailInput.id= `${item.id}`
+    const hiddenInput = document.querySelector(".message-form").childNodes[1].children[0]
+    // const trailInput = document.createElement("input")
+    // trailInput.type="hidden"
+    hiddenInput.id= `${item.id}`
     // trailInput.name= `${item.id}`
-    form.replaceChild(trailInput, hiddenInput)
-    addMessage(item)
+
+    // form.replaceChild(trailInput, hiddenInput)
+    // addMessage(item)
 
     const longitude = parseFloat(e.target.attributes.longitude.value)
     const latitude = parseFloat(e.target.attributes.latitude.value)
