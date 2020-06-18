@@ -1,3 +1,4 @@
+// Waits for DOM to load then fetches trail data and messages
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log('DOM fully loaded and parsed')
 
@@ -23,11 +24,33 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
+    // put mapbox access token here 
     accessToken: 'pk.eyJ1Ijoiam9obnJ1c2NoIiwiYSI6ImNrYml1eGF5bjBqMzkydnFueGdmbzZkNjcifQ.BSK5zVzCjjSKDKDSb1xcnA'
 }).addTo(mymap);
 
-var marker = L.marker([47.571360, -122.349406]).addTo(mymap);
-marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
+// MAP COUNTER MARKERS
+const burke_gilman_counter = L.marker([47.679359, -122.263684]).addTo(mymap);
+burke_gilman_counter.bindPopup("Burke Gilman Bike Counter");
+const elliott_bay_counter = L.marker([47.618844, -122.359963]).addTo(mymap);
+elliott_bay_counter.bindPopup("Elliott Bay Bike Counter");
+const ship_canal_counter = L.marker([47.648119, -122.349855]).addTo(mymap);
+ship_canal_counter.bindPopup("Ship Canal Bike Counter");
+const mts_counter = L.marker([47.590748, -122.288702]).addTo(mymap);
+mts_counter.bindPopup("Mountain To Sound Bike Counter");
+const wsb_counter = L.marker([47.571422, -122.349617]).addTo(mymap);
+wsb_counter.bindPopup("West Seattle Bridge Bike Counter");
+const cs_counter = L.marker([47.527844, -122.280171]).addTo(mymap);
+cs_counter.bindPopup("Chief Sealth Bike Counter");
+const second_ave_counter = L.marker([47.604777, -122.334661]).addTo(mymap);
+second_ave_counter.bindPopup("Second Avenue Bike Counter");
+const golden_gardens_counter = L.marker([47.670933, -122.384743]).addTo(mymap);
+golden_gardens_counter.bindPopup("Golden Gardens Bike Counter");
+const bryant_greenway_counter = L.marker([47.673886, -122.285766]).addTo(mymap);
+bryant_greenway_counter.bindPopup("Bryant Greenway Bike Counter");
+const broadway_counter = L.marker([47.613500, -122.320842]).addTo(mymap);
+broadway_counter.bindPopup("Broadway Bike Counter");
+
+
     
 // WEATHER
 function drawWeather( d ) {
@@ -66,13 +89,11 @@ window.onload = function() {
 
 
 //MESSAGES
-// const msgContainer = document.querySelector("#messages")
 const msgTabs = document.querySelector("#associated-trails")
 const msgSection = document.querySelector("#messages")
-// const messages = document.querySelector(".messages")
 const form = document.querySelector(".message-form")
 
-
+// FETCHES MESSAGES FROM BACKEND
 function getMessage(){
     fetch("http://localhost:3000/messages")
     .then(resp => resp.json())
@@ -81,14 +102,13 @@ function getMessage(){
         )
 }
 
+// RENDERS MESSAGE CARD, APPENDS TO DOM
 function renderMessage(message){
     const cardBlock = document.querySelector(".card-block")
-    // const cardBlock = document.createElement("div")
-    // cardBlock.className = "card-block"
     
     const card = document.createElement("div")
     card.className = "card"
-    // card.className = `msg-${message.bike_trail_id}`
+
     card.id = `msg-${message.bike_trail_id}`
     card.style.display = "none"
     
@@ -103,84 +123,44 @@ function renderMessage(message){
     msgCol.className = "col-sm-6"
     msgCol.innerText = message.content
 
+    const messageId = document.createElement("div")
+    messageId.hidden = true
+    messageId.id = message.id
     
     row.append(userCol, msgCol)
+    card.appendChild(messageId)
     card.appendChild(row)
     cardBlock.appendChild(card)
-    // console.log(cardBlock)
-
-    // const div = document.createElement("div")
-    // div.className = "row"
-    // div.hidden = true
-
-    // const userCol = document.querySelector(".col-sm-4")
-    // const cardText = document.querySelector(".card-text")
-    // // div.id = `message.bike_trail_id`
-    
-    // const user_name = document.createElement("li")
-    // user_name.innerText = message.user_name
-
-    // const msg = document.createElement("p")
-    // msg.innerText = message.content
-
-    // // const bikeTrail = document.createElement("li")
-    // // bikeTrail.id = message.bike_trail_id
-    // // bikeTrail.innerText = message.bike_trail.name
-    // // bikeTrailListener(bikeTrail, div)
-
-    // userCol.appendChild(user_name)
-    // cardText.appendChild(msg)
-    
-    // msgSection.appendChild(messages)
-    // div.append(user_name, msg)
-    // row.appendChild(div)
-
-    // messages.appendChild(div)
-    // msgTabs.append(bikeTrail)
 }
-
-// function bikeTrailListener(bikeTrail, div) {
-//     bikeTrail.addEventListener("click", (e) => {
-//         const cards = document.querySelectorAll(".msgCard")
-//         cards.forEach(card => card.hidden = true)
-//         div.hidden = false
-
-//         const hiddenInput = document.querySelector(".message-form").childNodes[1]
-//         const trailInput = document.createElement("input")
-//         trailInput.type="hidden"
-//         trailInput.id= `${bikeTrail.id}`
-//         trailInput.name= `${bikeTrail.id}`
-//         form.replaceChild(trailInput, hiddenInput)
-//         addMessage(bikeTrail)
-//     })
-// }
-
-function addMessage(item){
-    const userInput = document.querySelector(".user_name-input")
-    const msgInput = document.querySelector(".message-input")
-    const newUser = document.createElement("p")
-    // newUser.className = "bg-secondary"
-    const newMsg = document.createElement("p")
-    const newTrail = parseInt(`${item.id}`)
-    debugger
-    postBtn.addEventListener("click", (e) => {
-        e.preventDefault()
-        debugger
-        const messages = document.querySelectorAll(`#msg-${e.target.id}`)
-        messages.forEach( message => {
-            message.style.display = "block"
-        })
-        
-        newUser.innerText = userInput.value
-        userInput.value = ""
-        newMsg.innerText = msgInput.value
-        msgInput.value = ""
-        postMessage(newUser, newMsg, newTrail)
+ 
+// ADDS DELETE BUTTON TO NEW MESSAGE
+function addDeleteButton(message) {
+    const deleteBtn = document.createElement("button")
+    deleteBtn.innerText = "Delete"
+    deleteBtn.className = "btn btn-danger btn-sm col-sm-2"
+    message.children[1].appendChild(deleteBtn)
+    deleteBtn.addEventListener("click", function(e){
+        deleteMessage(message)
+        message.remove()
     })
 }
+
+// DELETE FETCH REQ
+function deleteMessage(message) {
+    fetch(`http://localhost:3000/messages/${message.children[0].id}`, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(json => {return json})
+  }
+
+// ADDS LISTENER TO POST BUTTON
 const postBtn = document.querySelector("#message-button")
 postBtn.addEventListener("click", (e) => {
     e.preventDefault()
+    if (form.bike_trail_id.id === ""){
+        alert("Please select a bike trail")
+    } else {
     let userInput = document.querySelector(".user_name-input").value
     let msgInput = document.querySelector(".message-input").value
     const newTrail = parseInt(`${e.target.parentNode.children[0].id}`)
@@ -189,22 +169,13 @@ postBtn.addEventListener("click", (e) => {
         content: msgInput,
         bike_trail_id: newTrail
     }
-    renderMessage(newMsg)
-    const messages = document.querySelectorAll(`#msg-${e.target.parentNode.children[0].id}`)
-    messages.forEach( message => {
-        message.style.display = "block"
-    })
-    debugger
     document.querySelector(".user_name-input").value = ""
     document.querySelector(".message-input").value = ""
-    // newUser.innerText = userInput.value
-    // userInput.value = ""
-    // newMsg.innerText = msgInput.value
-    // msgInput.value = ""
     postMessage(userInput, msgInput, newTrail)
+    }
 })
 
-
+// POST FETCH REQ
 function postMessage(newUser, newMsg, newTrail){
     fetch("http://localhost:3000/messages", {
         method: "POST",
@@ -221,9 +192,11 @@ function postMessage(newUser, newMsg, newTrail){
     .then(resp => resp.json())
     .then(json => {
         renderMessage(json)
-        debugger
+        const newMessage = document.getElementById(`${json.id}`).parentNode
+        newMessage.style.display = "block"
+        addDeleteButton(newMessage)
+
     })
-    // document.querySelector(`msg-)
 }
 
 // TRAIL DATA
@@ -237,44 +210,58 @@ function getBikeTrailData(bikeTrailId) {
     .then(resp => resp.json())
     .then(json => renderBikeTrailData(json)) 
 }
-// format it, hide it
+
+// RENDERS BIKE TRAIL DATA CARDS
 function renderBikeTrailData(data) {
+    // parses counter data api
     const trailName = data["data"]["attributes"]["name"]
     const trailDistance = data["data"]["attributes"]["distance"]
     const trailType = data["data"]["attributes"]["trail_type"]
     const trailCard = document.createElement("div")
-    trailCard.id = ``
-    // trailCard.className = "card"
     trailCard.id = `card-${data["data"]["id"]}`
     const innerTrailInfo = document.createElement("div")
 
+    // creates "Report a Problem" button
+    const trailProblemRow = document.createElement("row")
+    const trailProblemBtn = document.createElement('button')
+    trailProblemBtn.innerText = "Report a Problem"
+    trailProblemBtn.className = "btn btn-primary btn-block btn-lg"
+    trailProblemBtn.addEventListener('click', () => {
+        document.location.href = 'https://seattle-csrprodcwi.motorolasolutions.com/Home.mvc/Index'
+    })
+    trailProblemRow.appendChild(trailProblemBtn)
 
-    const trailHeader = document.createElement("h2")
+    // trail name
+    const trailHeader = document.createElement("h1")
     trailHeader.innerText = `${trailName}`
     trailHeader.className = `${data["data"]["id"]}`
 
-    const trailInfoDistance = document.createElement("div")
+    // trail info
+    const trailInfoDistance = document.createElement("h2")
     trailInfoDistance.className = "col-sm-6"
-    trailInfoDistance.innerText = `Distance: ${trailDistance} Miles`
-    const trailInfoType = document.createElement("div")
+    trailInfoDistance.innerText = `${trailDistance} Miles`
+    const trailInfoType = document.createElement("h2")
     trailInfoType.className = "col-sm-6"
-    trailInfoType.innerText = `Type ${trailType}`
+    trailInfoType.innerText = trailType
     trailCard.style.display = "none"
-    innerTrailInfo.append(trailInfoDistance, trailInfoType)
+
+    // appends to DOM element
+    innerTrailInfo.append(trailInfoDistance, trailInfoType, trailProblemRow)
     trailCard.appendChild(trailHeader)
     trailCard.appendChild(innerTrailInfo)
-    trailInfo.appendChild(trailCard)
+    trailInfo.append(trailCard)
     
-
-    const trailNameDropdown = document.createElement("li")
+    // creates dropdown menu option
+    const trailNameDropdown = document.createElement("a")
     trailNameDropdown.innerText = trailName 
     trailNameDropdown.id = `${data["data"]["id"]}`
+    trailNameDropdown.className = "dropdown-item"
     trailNameDropdown.setAttribute("longitude", data["data"]["attributes"]["locations"][0]["longitude"])
     trailNameDropdown.setAttribute("latitude", data["data"]["attributes"]["locations"][0]["latitude"])
     addListenerToDropdownItem(trailNameDropdown)
     pathSelector.appendChild(trailNameDropdown)
 
-    // CHART
+    // creates data chart
     const chartContainer = document.createElement("div")
     chartContainer.style = "height: 290px; width: 90%; right: 40px; position: absolute;"
     chartContainer.id = `chartContainer-${data["data"]["id"]}`
@@ -287,23 +274,17 @@ function renderBikeTrailData(data) {
     let month = parseInt(yearMonth[1])
     let monthValue = (monthNames[month - 1])
 
+    // creates data points
     let trailDataPoints = []
     data["included"].forEach(point => {
-        // let fullDt = point["attributes"]["date_time"]
-        // if (fullDt != undefined) {
         let dataObj = { 
-            // label: (fullDt.charAt(05) + fullDt.charAt(06) + "/" + fullDt.charAt(8) + fullDt.charAt(9)),
             label: point["attributes"]["date_time"],
             y: point["attributes"]["total_trips"]
         }
         trailDataPoints.push(dataObj)
-        // }
     })
-let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
+    let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
         theme: "light2",
-		title:{
-			text: "January 2019 Traffic"              
-        },
         zoomEnabled: true,
         rangeChanging: function (e) {
             //update total count 
@@ -320,7 +301,6 @@ let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
         },
 		data: [              
 		{
-			// Change type to "doughnut", "line", "splineArea", etc.
 			type: "line",
 			dataPoints: trailDataPoints
 		}
@@ -333,30 +313,18 @@ let chart = new CanvasJS.Chart(`chartContainer-${data["data"]["id"]}`, {
               gridThickness: 0,
               tickLength: 0,
               lineThickness: 0,
+              title: "Date-Time",
               labelFontColor: "transparent"
             }
     });
     chart.render();
     chartContainer.style.display = "none";
-
-
-
-
-    const latitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
-    const longitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
-    // mymap.setView([longitude, latitude], 13);
-
-    // let marker = L.marker([longitude, latitude]).addTo(mymap)
-    // marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
 }
-// make it identifiable so that when you select a trail it can appear
+
 
 
 
 // BIKE PATH LISTENERS AND SELECTORS
-// const pathDropdown = document.querySelector("#path-selector")
-
-
 function addListenerToDropdownItem(item) {
     item.addEventListener("click", (e) => {
     let infoChildren = trailInfo.children;
@@ -375,8 +343,7 @@ function addListenerToDropdownItem(item) {
         let messageChild = messageChildren[i];
         messageChild.style.display = "none"
     }
-    // trailInfo.children.style.display = "none";
-    // trailData.children.style.display = "none";
+ 
     const card = document.getElementById(`card-${e.target.id}`)
     card.style.display = "block"
     const chart = document.getElementById(`chartContainer-${e.target.id}`)
@@ -385,54 +352,15 @@ function addListenerToDropdownItem(item) {
     trailMessages.forEach( message => {
         message.style.display = "block"
     })
-
     const hiddenInput = document.querySelector(".message-form").childNodes[1].children[0]
-    // const trailInput = document.createElement("input")
-    // trailInput.type="hidden"
-    hiddenInput.id= `${item.id}`
-    // trailInput.name= `${item.id}`
+    hiddenInput.id = `${item.id}`
 
-    // form.replaceChild(trailInput, hiddenInput)
-    // addMessage(item)
-
+    // zooms map to bike trail counter location
     const longitude = parseFloat(e.target.attributes.longitude.value)
     const latitude = parseFloat(e.target.attributes.latitude.value)
     mymap.flyTo([longitude, latitude], 14)
-
     });
 }
         
         
 
-    //     const cardBlock = document.querySelector(".card-block")
-    //     let messageChildren = cardBlock.children;
-    //     for (let i=0; i < messageChildren.length; i++) {
-    //         let messageChild = messageChildren[i];
-    //         messageChild.style.display = "none"
-    //     }
-    //     // let messages = document.querySelectorAll(".card")
-    //     // messages.forEach(card => {
-    //     //     card.style.display = "none"
-    //     // })
-      
-    //     // trailInfo.children.style.display = "none";
-    //     // trailData.children.style.display = "none";
-    //     const card = document.getElementById(`card-${e.target.id}`)
-    //     card.style.display = "block"
-    //     const chart = document.getElementById(`chartContainer-${e.target.id}`)
-    //     chart.style.display = "block";
-
-    //     const trailMessages = document.querySelectorAll(`#msg-${e.target.id}`)
-    //     trailMessages.forEach( message => {
-    //         message.style.display = "block"
-    //     })
-
-    //     const hiddenInput = document.querySelector(".message-form").childNodes[1]
-    //     const trailInput = document.createElement("input")
-    //     trailInput.type="hidden"
-    //     trailInput.id= `${item.id}`
-    //     // trailInput.name= `${item.id}`
-    //     form.replaceChild(trailInput, hiddenInput)
-    //     addMessage(item)
-    //     });
-    // }
