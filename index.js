@@ -251,16 +251,20 @@ function renderBikeTrailData(data) {
 
     // CHART
     const chartContainer = document.createElement("div")
-    chartContainer.style = "height: 290px; width: 100%; right: 0px; position: absolute;"
+    chartContainer.style = "height: 290px; width: 90%; right: 40px; position: absolute;"
     chartContainer.id = `chartContainer-${data["data"]["id"]}`
     trailData.appendChild(chartContainer)
     let trailDataPoints = []
     data["included"].forEach(point => {
+        // let fullDt = point["attributes"]["date_time"]
+        // if (fullDt != undefined) {
         let dataObj = { 
+            // label: (fullDt.charAt(05) + fullDt.charAt(06) + "/" + fullDt.charAt(8) + fullDt.charAt(9)),
             label: point["attributes"]["date_time"],
             y: point["attributes"]["total_trips"]
         }
         trailDataPoints.push(dataObj)
+        // }
     })
     const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -282,10 +286,23 @@ function renderBikeTrailData(data) {
 			type: "line",
 			dataPoints: trailDataPoints
 		}
-		]
+        ],
+            axisX:{
+                crosshair: {
+                enabled: true,      
+                labelFormatter: e => { return ""}
+              },
+              gridThickness: 0,
+              tickLength: 0,
+              lineThickness: 0,
+              labelFontColor: "transparent"
+            }
     });
     chart.render();
     chartContainer.style.display = "none";
+
+
+
 
     const latitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
     const longitude = parseInt(data["data"]["attributes"]["locations"][0]["latitude"])
