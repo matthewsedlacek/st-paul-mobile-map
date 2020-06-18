@@ -21,8 +21,7 @@ Users can:
 - Delete a comment that was recently posted
 - Report a problem to the City of Seattle
 ## Screenshots
-(landing page)
-(selected trail view)
+![](Seattle-Bike-Traffic.gif)
 ## Technology Used
 - Rails as API
 - JavaScript
