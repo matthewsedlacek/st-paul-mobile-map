@@ -25,7 +25,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     tileSize: 512,
     zoomOffset: -1,
     // put mapbox access token here 
-    accessToken: 'pk.eyJ1Ijoiam9obnJ1c2NoIiwiYSI6ImNrYml1eGF5bjBqMzkydnFueGdmbzZkNjcifQ.BSK5zVzCjjSKDKDSb1xcnA'
+    accessToken: '<your mapbox access token here>'
 }).addTo(mymap);
 
 // MAP COUNTER MARKERS
