@@ -28,7 +28,8 @@ L.tileLayer(
     tileSize: 512,
     zoomOffset: -1,
     // put mapbox access token here
-    accessToken: "<your mapbox access token here>",
+    accessToken:
+      "pk.eyJ1IjoibWF0dHNlZDE5OTEiLCJhIjoiY2tlYWRyZzFoMDI4cDJzcHU3ZzJuNnFrdiJ9.r94ih7yPhMDQ8UB8X80zLA",
   }
 ).addTo(mymap);
 
