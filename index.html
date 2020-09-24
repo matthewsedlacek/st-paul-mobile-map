@@ -1,113 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seattle Bike Traffic</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>St. Paul Mobile Map</title>
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
     <!-- bootstrap theme -->
     <link rel="stylesheet" type="text/css" href="./css/simplex.css" />
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
+      integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd"
+      crossorigin="anonymous"
+    />
     <!-- bootstrap js -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!-- canvas (for chart) -->
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <!-- leaflet (for map) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
     <!-- internal js file -->
     <script defer type="text/javascript" src="index.js"></script>
-</head>
-<body>
-
+  </head>
+  <body>
     <!-- weather header -->
-    <nav class="navbar navbar-fixed-top bg-primary";>
-        <div class="container-fluid">
-                <div class="col-sm-3">
-                    <h2>Weather</h2>
-                </div>
-                <div class="col-sm-3">
-                    <div id="description"></div>
-                </div>
-                <div class="col-sm-3">
-                    <h1 id="temp"></h1>
-                </div>
-                <div class="col-sm-3">
-                    <div id="location"></div>
-                </div>
+    <nav class="navbar navbar-fixed-top bg-primary" ;>
+      <div class="container-fluid">
+        <div class="col-sm-3">
+          <h2>Weather</h2>
         </div>
+        <div class="col-sm-3">
+          <div id="description"></div>
+        </div>
+        <div class="col-sm-3">
+          <h1 id="temp"></h1>
+        </div>
+        <div class="col-sm-3">
+          <div id="location"></div>
+        </div>
+      </div>
     </nav>
 
     <!-- body container -->
-    <div class="container-fluid content" style="margin-top: 75px; margin-bottom: auto;">
+    <div
+      class="container-fluid content"
+      style="margin-top: 75px; margin-bottom: auto"
+    >
+      <!-- map -->
+      <div class="col-md-auto" style="height: 900px; margin-bottom: auto">
+        <div id="mapid"></div>
+      </div>
 
-        <!-- map -->
-        <div class="col-md-6" style="height:900px; margin-bottom: auto;" >
-            <div id="mapid"></div>
-        </div>
 
-        <!-- trail info, data, and comments -->
-        <div class="col col-md-6" style="height:500px;text-align: center;">
-          <div class="row card jumbotron" style="display: flexbox" id="trail-info">
-        
-          </div>
-            <div class="row card" style="height:300px;" id="trail-data">
-                <div class="col-md-12" style="display: none">
-                    Total Event : <input id="eventCount" type="text" value="0" readonly>   
-	                Event Trigger : <input id="triggerLog" type="text" value="so far no events" readonly />
-                </div>
-            </div>
-
-            <div class="row card" id="messages" style="margin-bottom: 100px;">
-                <div class="col-md-12">
-                    <h2>Comments</h2>
-                    <form class="message-form form-inline justify-content-center";>
-                        <div class="form-group">
-                            <input id = "0" type="hidden" name="bike_trail_id"/>
-                            <input 
-                                class = "user_name-input form-control"
-                                type="text"
-                                name="user_name"
-                                placeholder="Enter your name"
-                                />
-                            <input 
-                                class="message-input form-control"
-                                type="text"
-                                name="content"
-                                placeholder="Add a message..."
-                                />
-                            <button class="message-button btn btn-secondary" type="submit" id="message-button">Post</button>
-                        </div>
-                    </form>
-
-                    <!-- comments -->
-                    <div class="card-block scroll"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    
     <!-- bike traffic footer -->
     <nav class="navbar navbar-inverse navbar-fixed-bottom bg-primary">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand">Seattle Bike Traffic</a>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">Bike Path<span class="caret"></span></button>
-                <div class="dropdown-menu" id="path-selector">  
-                </div>
-            </div>
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand">St. Paul Mobile Map</a>
         </div>
-      </nav>
-</body>
-</html> 
+        <div class="dropdown">
+          <button
+            class="btn btn-outline-secondary dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+          >
+            Service Locations<span class="caret"></span>
+          </button>
+          <div class="dropdown-menu" id="path-selector"></div>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>

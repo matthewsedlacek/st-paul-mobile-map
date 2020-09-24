@@ -1,41 +1,24 @@
-# 🚴🏽‍♂️ Seattle Bike Traffic - Frontend 🚴🏽‍♂️
+# St. Paul Mobile Map
 
-An app that provides historical data and the ability to comment on Seattle's bike paths.
-The City of Seattle collects bike counter data at 10 locations. We wanted to utilize the Seattle bike-share data to show users how many bikers are using these routes.
-This [link](https://github.com/matthewsedlacek/seattle-cycling-traffic-backend) will direct you to the backend repository.
+Visitors, residents and workers have long suffered from a skyway navigation system that causes more confusion than solutions. Existing systems rely on static maps that are often outdated, inconsistent and generally unhelpful. The current system is not widely accessible, and we want as many people as possible to be able to easily enjoy the cultural amenities, employment opportunities and everything else that is housed within Downtown Saint Paul's skyway system.
 
-## Motivation
-
-The Seattle Cycling Trafic application was created to provide cyclists with a consolidated view of trail options and bicycle traffic patterns. The application empowers users to make informed decisions about which bike trail is best for them and the times to ride.
+This project's goal is to innovate a modernized solution to this problem – perhaps an interactive map or guidance and navigation system, a web or mobile app that helps people navigate the skyway system, which could also have other applications (interface with Passport parking app, emergency response / 9-1-1, and non-emergency methods to report a concern, such as poor building maintenance/ heating or cooling, etc.).
 
 ## Installation
 
 1. Clone this repository
-2. Run the backend server - refer to [backend](https://github.com/matthewsedlacek/seattle-cycling-traffic-backend) repository
-3. Type `open index.html` to open in preferred browser
-4. Enjoy Seattle Bike Traffic
+2. Type `open index.html` to open in preferred browser
 
 ## Features
 
 Users can:
 
-- Select a bike trail
-- View a dynamic map with all bike counter locations
-- View a bike trail's location, distance, and type
-- View a graph of the bike counter data info
-- Create a comment about the selected bike trail
-- Delete a comment that was recently posted
-- Report a problem to the City of Seattle
-
-## Screenshots
-
-![](Seattle-Bike-Traffic.gif)
+- Select a location
+- View a dynamic map of the Skyway
 
 ## Technology Used
 
-- Rails as API
 - JavaScript
-- Canvas.js
 - Leaflet
 - Boostrap
 
@@ -44,13 +27,8 @@ Users can:
 #### Authors
 
 - Matthew Sedlacek - [GitHub](https://github.com/matthewsedlacek)
-- John Rusch - [GitHub](https://github.com/johnrusch)
-- Andy del Valle - [GitHub](https://github.com/andydvalle)
-
-#### Special Thanks To
-
-- [SODA Developers](https://dev.socrata.com/foundry/data.seattle.gov/tw7j-dfaw)
-- [Faker](https://github.com/faker-ruby/faker)
+- Alison Link
+- Eric Ebbesen
 
 ## Licensing
 
